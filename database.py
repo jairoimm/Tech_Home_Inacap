@@ -16,11 +16,6 @@ def precargar_datos():
     coleccion = conectar_db()
     
     if coleccion is not None:
-        print("limpiando base de datos...")
-        resultados = coleccion.delete_many({})
-        print(f"Se eliminaron {resultados.deleted_count} documentos de la colección.")
-        coleccion.insert_many(datos_ejemplo)
-        print("Datos precargados exitosamente, base de datos inicializada.")
 
         datos_ejemplo = [
             {
@@ -167,6 +162,10 @@ def precargar_datos():
                 "fecha_ingreso": datetime(2020, 9, 25)
             }
         ]
+        print("limpiando base de datos...")
+        coleccion.delete_many({})
+        coleccion.insert_many(datos_ejemplo)
+        print("Datos precargados exitosamente, base de datos inicializada.")
         
     else:
         print("No se pudo conectar a la base de datos para precargar datos.")
