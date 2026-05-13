@@ -28,7 +28,7 @@ def main():
             nombre = input("Nombre del producto: ").strip()
             existe = coleccion.find_one({"nombre": {"$regex": f"^{nombre}$", "$options": "i"}})
             if existe:
-                print(f"el producto '{nombre}' ya existe.")
+                print(f"El producto '{nombre}' ya existe.")
             else:
                 categoria = input("Categoría: ").strip()
                 precio = float(input("Precio: "))
@@ -42,8 +42,10 @@ def main():
                         break
                     cantidad = int(input(f"Cantidad en {sucursal}: "))
                     stock_sucursales.append({"sucursal": sucursal, "cantidad": cantidad})
+                
                 fecha_input = input("Fecha de ingreso (YYYY-MM-DD): ")
                 fecha_ingreso = datetime.strptime(fecha_input, "%Y-%m-%d")
+                
                 nuevo_producto = {
                     "nombre": nombre,
                     "categoria": categoria,
@@ -52,18 +54,19 @@ def main():
                     "stock_sucursales": stock_sucursales,
                     "fecha_ingreso": fecha_ingreso
                 }
-            coleccion.insert_one(nuevo_producto)
-            print("Producto creado exitosamente.")
+                # AHORA EL INSERT ESTÁ DENTRO DEL ELSE
+                coleccion.insert_one(nuevo_producto)
+                print("Producto creado exitosamente.")
         
         elif opcion == '2':
-            productos = coleccion.find()
-            for producto in productos:
-                print(f"- Nombre: {producto['nombre']}, Categoría: {producto['categoria']}, Precio: ${producto['precio']}, ingreso: {producto['fecha_ingreso'].strftime('%Y-%m-%d')}")
-            if coleccion.count_documents({}) == 0:
+            print("\n--- Listado de Inventario ---")
+            productos = list(coleccion.find())
+            if not productos:
                 print("No hay productos en el inventario.")
             else:
-                for producto in coleccion.find():
-                    print(f"- Nombre: {producto['nombre']}, Categoría: {producto['categoria']}, Precio: ${producto['precio']}, ingreso: {producto['fecha_ingreso'].strftime('%Y-%m-%d')}")
+                for producto in productos:
+                    fecha_str = producto['fecha_ingreso'].strftime('%Y-%m-%d')
+                    print(f"- Nombre: {producto['nombre']}, Categoría: {producto['categoria']}, Precio: ${producto['precio']}, ingreso: {fecha_str}")
         elif opcion == '3':
             try:
                 monto = float(input("Ingrese el monto: ")) # Convertir a número es vital
